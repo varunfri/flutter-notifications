@@ -36,13 +36,6 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-          // onPressed: () async {
-          //   await notify.showNotification(
-          //     title: "Local Notification",
-          //     body: "Local Initialization",
-          //   );
-          //   debugPrint("Notiy");
-          // },
           onPressed: () async {
             debugPrint("scheduluing the schedule");
             await NotificationService().scheduleNotification(
