@@ -43,8 +43,15 @@ class _HomeState extends State<Home> {
           //   );
           //   debugPrint("Notiy");
           // },
-          onPressed: () async {},
-
+          onPressed: () async {
+            debugPrint("scheduluing the schedule");
+            await NotificationService().scheduleNotification(
+              title: "Alarm",
+              body: "ASDFASDF",
+              hour: 19,
+              minutes: 10,
+            );
+          },
           child: Text("Show Notification"),
         ),
       ),
