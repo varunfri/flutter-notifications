@@ -22,13 +22,26 @@ class _HomeState extends State<Home> {
     Timer.periodic(Duration(seconds: 30), (timer) {
       debugPrint("Time ${timer.tick}:");
       final time = DateFormat("h:mm a").format(DateTime.now());
-      if (time.toLowerCase() == "10:19 pm") {
+      if (time.toLowerCase() == "10:12 pm") {
+        debugPrint("Notified!!");
         notify.showNotification(
           title: "Time is: $time",
           body: "Time to notify",
         );
       }
     });
+  }
+
+  void schedule() async {
+    debugPrint("Started");
+    await notify.scheduleNotification(
+      title: "Punch in",
+      body: "ASD",
+      hour: 22,
+      minutes: 55,
+    );
+
+    debugPrint("NOtified!");
   }
 
   @override
@@ -38,12 +51,9 @@ class _HomeState extends State<Home> {
         child: ElevatedButton(
           onPressed: () async {
             debugPrint("scheduluing the schedule");
-            await NotificationService().scheduleNotification(
-              title: "Alarm",
-              body: "ASDFASDF",
-              hour: 19,
-              minutes: 10,
-            );
+            // await notify.showNotification(title: "title", body: "body");
+            // startTimeCheck();
+            schedule();
           },
           child: Text("Show Notification"),
         ),

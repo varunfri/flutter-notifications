@@ -2,6 +2,7 @@ import 'package:notification_flutter/export/export.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'dart:math';
 
 class NotificationService {
   //creating an instance
@@ -13,7 +14,10 @@ class NotificationService {
 
   //initializationFunction
   Future<void> initializeNotification() async {
-    if (_isInitialized) return;
+    if (_isInitialized) {
+      print("NOt init");
+      return;
+    }
 
     tz.initializeTimeZones();
     final currentTimeZone = await FlutterTimezone.getLocalTimezone();
@@ -63,7 +67,9 @@ class NotificationService {
     required int hour,
     required int minutes,
   }) async {
+    debugPrint("started schedule");
     final now = tz.TZDateTime.now(tz.local);
+    debugPrint("assigned time!");
 
     var scheduledDate = tz.TZDateTime(
       tz.local,
@@ -73,6 +79,11 @@ class NotificationService {
       hour,
       minutes,
     );
+
+    // If the scheduled date is in the past, schedule it for the next day.
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
 
     final androidDetails = AndroidNotificationDetails(
       'daily_reminder_channel_id', // channelId
@@ -89,17 +100,36 @@ class NotificationService {
       iOS: iosDetails,
     );
 
+    debugPrint("setted await!!");
+
+    // await localNotificationsPlugin.zonedSchedule(
+    //   id,
+    //   title,
+    //   body,
+    //   scheduledDate,
+    //   notificationDetails,
+    //   androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    //   matchDateTimeComponents: DateTimeComponents.time,
+    // );
+    final tm = tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+    debugPrint("assigned time $tm!");
+
     await localNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduledDate,
-      notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
+      0,
+      'scheduled title',
+      'scheduled body',
+      tm,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'your channel id',
+          'your channel name',
+          channelDescription: 'your channel description',
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
 
-    debugPrint("Scheduled Reminder");
+    debugPrint("Scheduled Reminder complete!s");
   }
 
   Future<void> cancelAllNotifications() async {
